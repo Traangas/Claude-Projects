@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+@layer base {
+  html {
+    @apply antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-white text-gray-600 font-light;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-normal text-black;
+  }
+}
+
+/* Component styles */
+@layer components {
+  /* Button styles */
+  .btn-primary {
+    @apply w-full bg-black text-white py-3 px-6 rounded font-normal transition-all duration-200 hover:bg-gray-800 active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply w-full bg-white text-black border border-gray-200 py-3 px-6 rounded font-normal transition-all duration-200 hover:bg-gray-50 active:scale-[0.98];
+  }
+
+  .btn-text {
+    @apply text-gray-400 font-light transition-colors duration-200 hover:text-black;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white border border-gray-200 rounded-lg transition-shadow duration-200 hover:shadow-card-hover;
+  }
+
+  /* Input styles */
+  .input {
+    @apply w-full border border-gray-300 rounded py-3 px-4 font-light focus:outline-none focus:border-black transition-colors duration-200;
+  }
+
+  /* Container styles */
+  .container-custom {
+    @apply max-w-7xl mx-auto px-6;
+  }
+}
+
+/* Utility styles */
+@layer utilities {
+  /* Custom scrollbar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Tap highlight removal for mobile */
+  .tap-highlight-none {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
