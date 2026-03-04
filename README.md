@@ -343,10 +343,10 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 # AWS S3
-AWS_REGION=us-east-1
+AWS_REGION=eu-west-1
 AWS_ACCESS_KEY_ID=your-access-key
 AWS_SECRET_ACCESS_KEY=your-secret-key
-AWS_S3_BUCKET=clearskin-ingredient-photos
+AWS_S3_BUCKET=wynandcode-storage-skinapp
 
 # Google Gemini
 GEMINI_API_KEY=your-gemini-api-key
@@ -418,24 +418,31 @@ Contributions are welcome! Please follow these guidelines:
 
 ### Development Priorities
 
-**Phase 1 (Weeks 1-2)**: Foundation
-- ✅ Project setup
-- ✅ Database & authentication
-- ✅ Core utilities
-- ✅ Landing & scan pages
-- ✅ Analysis & results
+**Phase 1 (Weeks 1-2)**: Foundation ✅ COMPLETED
+- ✅ Project setup and dependencies
+- ✅ AWS S3 integration (file storage)
+- ✅ Environment configuration
+- ✅ Git repository setup
+- ⏳ Database & authentication (pending)
+- ⏳ Landing & scan pages (pending)
+- ⏳ Analysis & results (pending)
 
-**Phase 2 (Weeks 3-4)**: User Features
-- Product history
-- Rating system
-- Profile management
-- Product comparison
+**Phase 2 (Weeks 3-4)**: User Features 🚧 CURRENT
+- ⏳ Landing page UI
+- ⏳ Product scanning interface
+- ⏳ Analysis results display
+- ⏳ Product history page
+- ⏳ Rating system
+- ⏳ Profile management
+- ⏳ Product comparison
 
-**Phase 3 (Weeks 5-6)**: Launch Preparation
-- Security audit
-- Content & legal
-- User testing
-- Production deployment
+**Phase 3 (Weeks 5-6)**: Launch Preparation 📅 UPCOMING
+- ⏳ Supabase setup and authentication
+- ⏳ Google Gemini AI integration
+- ⏳ Security audit
+- ⏳ Content & legal compliance
+- ⏳ User testing
+- ⏳ Production deployment to Vercel
 
 ## 📚 Resources
 
@@ -455,9 +462,75 @@ This project is proprietary and confidential.
 
 ---
 
-**Version**: 1.0
-**Last Updated**: November 6, 2025
+## 🔄 Current Development Status
+
+### ✅ Completed (Week 1-2)
+- [x] Project initialization and structure
+- [x] Dependencies installed (Next.js, TypeScript, Tailwind, Supabase, AWS SDK, Gemini)
+- [x] AWS S3 integration fully implemented and tested
+  - S3 bucket: `wynandcode-storage-skinapp` (eu-west-1)
+  - Upload/download/delete functionality
+  - Presigned URL generation
+  - React hooks for easy integration
+  - Test endpoint: `/api/test-s3`
+- [x] Environment configuration (.env.example, .env.local)
+- [x] Git repository setup and connected to GitHub
+- [x] Development documentation (README, CLAUDE.md)
+
+### 🚧 In Progress (Week 3-4)
+- [ ] Frontend UI development
+- [ ] Landing page
+- [ ] Product scanning interface
+- [ ] Analysis results display
+- [ ] Product history page
+- [ ] Comparison feature
+- [ ] User profile page
+
+### 📅 Upcoming (Week 5-6)
+- [ ] Supabase database setup
+- [ ] Authentication implementation
+- [ ] Google Gemini AI integration
+- [ ] End-to-end testing
+- [ ] Production deployment to Vercel
+
+**Current Branch**: `claude/setup-github-repo-011CUxeMQ1dQ3yxPqZk8ATYB`
+
+---
+
+## 👨‍💻 For Developers
+
+### Quick Start
+See **CLAUDE.md** for comprehensive development context, architecture decisions, and step-by-step guides for continuing development.
+
+### Working with S3
+The S3 integration is complete and ready to use:
+
+```typescript
+// Example: Upload an image
+import { useS3Upload } from '@/lib/s3/hooks';
+
+function MyComponent() {
+  const { upload, progress, error } = useS3Upload();
+
+  const handleUpload = async (file: File) => {
+    const result = await upload(file, 'products');
+    console.log('Uploaded:', result.url);
+  };
+}
+```
+
+Test S3 connection:
+```bash
+curl http://localhost:3000/api/test-s3
+# Expected: {"success":true,"message":"S3 connection successful"}
+```
+
+---
+
+**Version**: 1.0.0
+**Last Updated**: March 4, 2026
 **Target Launch**: Q1 2026
+**License**: Proprietary
 
 ---
 
