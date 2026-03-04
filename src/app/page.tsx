@@ -1,80 +1,166 @@
+'use client';
+
+import { useState, useRef } from 'react';
+import { Camera, RotateCcw } from 'lucide-react';
+
 export default function Home() {
+  const [preview, setPreview] = useState('');
+  const [mimeType, setMimeType] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [ingredients, setIngredients] = useState('');
+  const [error, setError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIngredients('');
+    setError('');
+    setMimeType(file.type);
+
+    const reader = new FileReader();
+    reader.onloadend = () => setPreview(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const handleAnalyze = async () => {
+    if (!preview) return;
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const base64 = preview.split(',')[1];
+      const res = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64, mimeType }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || 'Analysis failed');
+
+      setIngredients(data.ingredients);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReset = () => {
+    setPreview('');
+    setMimeType('');
+    setIngredients('');
+    setError('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   return (
-    <main className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="container-custom py-20 md:py-32">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-hero-mobile md:text-hero-desktop font-normal mb-6">
-            Know what's in your skincare.
-            <br />
-            <span className="text-gray-400">Cut through the marketing hype.</span>
-          </h1>
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* Header */}
+      <header className="px-6 py-5 border-b border-gray-100">
+        <h1 className="text-xl font-normal tracking-tight text-black">ClearSkin</h1>
+        <p className="text-xs text-gray-400 font-light mt-0.5">Ingredient scanner</p>
+      </header>
 
-          <p className="text-lg md:text-xl text-gray-600 font-light mb-12 max-w-2xl mx-auto">
-            Scan product ingredient lists instantly, get AI-powered analysis in plain language, and track what works for your skin.
-          </p>
-
-          <button className="btn-primary max-w-md mx-auto">
-            Scan Your First Product
-          </button>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="container-custom py-16 md:py-24">
-        <div className="grid md:grid-cols-3 gap-8 md:gap-12">
-          {/* Feature 1 */}
-          <div className="text-center">
-            <div className="mb-4">
-              <div className="w-16 h-16 mx-auto bg-black rounded-full flex items-center justify-center text-white text-2xl">
-                🔍
-              </div>
-            </div>
-            <h3 className="text-xl mb-3">Ingredient Analysis</h3>
-            <p className="text-gray-600 font-light">
-              AI-powered analysis of what each ingredient does, in plain language you can understand.
+      <main className="flex-1 px-5 py-7 w-full max-w-lg mx-auto">
+        {!preview ? (
+          /* Upload zone */
+          <div className="space-y-5">
+            <p className="text-sm text-gray-400 font-light">
+              Photograph the ingredient list on a product label to see what&apos;s inside.
             </p>
-          </div>
 
-          {/* Feature 2 */}
-          <div className="text-center">
-            <div className="mb-4">
-              <div className="w-16 h-16 mx-auto bg-black rounded-full flex items-center justify-center text-white text-2xl">
-                📊
-              </div>
-            </div>
-            <h3 className="text-xl mb-3">Personal History</h3>
-            <p className="text-gray-600 font-light">
-              Track products you've tried and rate their effectiveness for your unique skin.
-            </p>
-          </div>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full border border-dashed border-gray-200 rounded-2xl py-14 flex flex-col items-center gap-3 active:bg-gray-50 transition-colors"
+            >
+              <Camera className="w-7 h-7 text-gray-300" />
+              <span className="text-sm text-gray-400 font-light">Take photo or choose image</span>
+            </button>
 
-          {/* Feature 3 */}
-          <div className="text-center">
-            <div className="mb-4">
-              <div className="w-16 h-16 mx-auto bg-black rounded-full flex items-center justify-center text-white text-2xl">
-                ⚖️
-              </div>
-            </div>
-            <h3 className="text-xl mb-3">Smart Recommendations</h3>
-            <p className="text-gray-600 font-light">
-              Compare products side-by-side and get recommendations based on what worked for you.
-            </p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageSelect}
+              className="hidden"
+            />
           </div>
-        </div>
-      </section>
+        ) : (
+          /* After image selected */
+          <div className="space-y-5">
+            {/* Image preview */}
+            <div className="relative rounded-2xl overflow-hidden bg-gray-50">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={preview}
+                alt="Product label"
+                className="w-full max-h-72 object-contain"
+              />
+              <button
+                onClick={handleReset}
+                className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-sm active:scale-95 transition-transform"
+                aria-label="Remove image"
+              >
+                <RotateCcw className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+
+            {/* Scan button */}
+            {!ingredients && !loading && (
+              <button onClick={handleAnalyze} className="btn-primary">
+                Scan Ingredients
+              </button>
+            )}
+
+            {/* Loading */}
+            {loading && (
+              <div className="flex flex-col items-center py-8 gap-3">
+                <div className="w-5 h-5 border-2 border-gray-200 border-t-black rounded-full animate-spin" />
+                <p className="text-xs text-gray-400 font-light">Reading ingredients…</p>
+              </div>
+            )}
+
+            {/* Error */}
+            {error && (
+              <p className="text-sm text-red-400 font-light">{error}</p>
+            )}
+
+            {/* Results */}
+            {ingredients && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs uppercase tracking-widest text-gray-300 font-normal">
+                    Ingredients found
+                  </span>
+                  <button
+                    onClick={handleReset}
+                    className="text-xs text-gray-400 underline underline-offset-2"
+                  >
+                    Scan another
+                  </button>
+                </div>
+                <div className="bg-gray-50 rounded-2xl p-5">
+                  <p className="text-sm font-light leading-7 text-gray-700 whitespace-pre-wrap">
+                    {ingredients}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 py-8 mt-16">
-        <div className="container-custom text-center">
-          <p className="text-sm text-gray-400 font-light">
-            Not medical advice. Consult a dermatologist for skin concerns.
-          </p>
-          <p className="text-xs text-gray-400 mt-2">
-            © 2025 ClearSkin. All rights reserved.
-          </p>
-        </div>
+      <footer className="px-6 py-5 border-t border-gray-100 text-center">
+        <p className="text-xs text-gray-300 font-light">
+          For educational use only. Not medical advice.
+        </p>
       </footer>
-    </main>
+    </div>
   );
 }
