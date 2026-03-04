@@ -3,8 +3,8 @@
  *
  * This module provides the S3 client configuration for the ClearSkin platform.
  *
- * Bucket: clearskin-s3-bucket
- * Region: eu-north-1 (Europe - Stockholm)
+ * Bucket: wynandcode-storage-skinapp
+ * Region: eu-west-1 (Europe - Ireland)
  * Purpose: Storing scanned images, profile photos, and general file uploads
  */
 

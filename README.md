@@ -162,7 +162,7 @@ Unlike competitors who focus on selling products or providing databases, ClearSk
      ```
 
 5. **Set up AWS S3**
-   - Create S3 bucket: `clearskin-ingredient-photos`
+   - Create S3 bucket: `wynandcode-storage-skinapp`
    - Set up CORS policy
    - Create IAM user with S3 access
 
