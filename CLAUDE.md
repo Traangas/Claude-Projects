@@ -284,7 +284,17 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 - **System Node.js is v16** — too old for Next.js 14
 - **Use nvm Node.js v18.20.8**: `/Users/Wynand/.nvm/versions/node/v18.20.8/bin/node`
 - `.claude/launch.json` is configured to use the correct node binary directly
-- When running manually: `source ~/.nvm/nvm.sh && nvm use 18 && npm run dev`
+- When running manually: `/Users/Wynand/.nvm/versions/node/v18.20.8/bin/node node_modules/.bin/next dev`
+
+### 5. iCloud & node_modules
+- `~/Documents` is synced by iCloud — this causes `ETIMEDOUT` errors when Node reads `node_modules`
+- **Fix applied**: `node_modules` is a symlink → `node_modules.nosync` (iCloud ignores `.nosync` files)
+- If the symlink ever breaks (e.g. after a restart), recreate it:
+  ```bash
+  cd /Users/Wynand/Documents/Claude-Projects
+  rm -f node_modules && ln -s node_modules.nosync node_modules
+  ```
+- Never run `npm install` without checking the symlink exists first
 
 ---
 
